@@ -53,7 +53,10 @@ class RunAction : public G4UserRunAction
 
     void BeginOfRunAction(const G4Run*) override;
     void   EndOfRunAction(const G4Run*) override;
-
+	G4double xmin;
+	G4double xmax;
+	G4int binsize;
+	G4int nbins;
     void AddEdep (G4double edep);
 
   private:

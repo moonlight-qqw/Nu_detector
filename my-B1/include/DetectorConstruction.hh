@@ -49,10 +49,10 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
     G4VPhysicalVolume* Construct() override;
 
-    G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
+    //G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
 
   protected:
-    G4LogicalVolume* fScoringVolume = nullptr;
+    //G4LogicalVolume* fScoringVolume = nullptr;
 };
 
 }

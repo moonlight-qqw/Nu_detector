@@ -47,24 +47,29 @@ EventAction::EventAction(RunAction* runAction)
 
 void EventAction::BeginOfEventAction(const G4Event*)
 {
-  fEdep = 0.;
+  //fEdep = 0.;
   EdepInCrystal = 0.;
   nAbsPhotons = 0.;
-  absTime = 0.;
+  //absTime = 0.;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::EndOfEventAction(const G4Event* evt)
 {
-  // accumulate statistics in run action
-  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-  //fRunAction->AddEdep(fEdep);
-  // fill histograms
+	  // accumulate statistics in run action
+	  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+	  
+	  //fill hist
+	  analysisManager->FillH1(1, nAbsPhotons);
+	  
 	  //analysisManager->FillH1(0, EdepInCrystal);
-	  //analysisManager->FillH1(1, nAbsPhotons);
-	  //analysisManager->FillH1(2, absTime);
-	  //analysisManager->FillH1(3, k_primary);
+  
+  	  // fill ntuple
+	  //analysisManager->FillNtupleDColumn(0, EdepInCrystal);
+	  analysisManager->FillNtupleDColumn(1, nAbsPhotons);
+	  analysisManager->AddNtupleRow();
+	 
 
 }
 

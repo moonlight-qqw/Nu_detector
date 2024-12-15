@@ -35,8 +35,11 @@
 #include "G4Event.hh"
 #include "G4RunManager.hh"
 #include "G4LogicalVolume.hh"
+#include "Randomize.hh"
+#include "Analysis.hh"
 
 #include <fstream>
+#include <cstdlib> 
 
 using namespace std;
 namespace B1
@@ -52,20 +55,31 @@ SteppingAction::SteppingAction(EventAction* eventAction)
 
 void SteppingAction::UserSteppingAction(const G4Step* step)
 {
-  ofstream f;
-  int n_photons = 0;
+  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+  //ofstream f;
+  //int n_photons = 0;
+  /*
   if (!fScoringVolume) {
     const auto detConstruction = static_cast<const DetectorConstruction*>(
       G4RunManager::GetRunManager()->GetUserDetectorConstruction());
     fScoringVolume = detConstruction->GetScoringVolume();
   }
+  */
   
   const G4String currentPhysicalName 
     = step->GetPreStepPoint()->GetPhysicalVolume()->GetName();
+  
+  const G4String postPhysicalName 
+    = step->GetPostStepPoint()->GetPhysicalVolume()->GetName();  
     
+  const G4String prePhysicalName 
+    = step->GetPreStepPoint()->GetPhysicalVolume()->GetName();  
+    
+  G4int CurrentTrackID;
   const G4String particleName
 	= step->GetTrack()->GetDefinition()->GetParticleName();
 
+  bool FirstPhoton = false;
   // get volume of the current step
   /*G4LogicalVolume* volume
     = step->GetPreStepPoint()->GetTouchableHandle()
@@ -73,22 +87,69 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 
   // check if we are in scoring volume
   //if (volume != fScoringVolume) return;
-  if (particleName == "opticalphoton"){
-  G4cout << "/////////////////////" << G4endl;
-  G4cout << currentPhysicalName << G4endl;
-  G4cout << "/////////////////////" << G4endl;
+  /*
+  G4ThreeVector vec = step->GetPreStepPoint()->GetPosition();
+  G4double rCurrent;
+  G4double r = sqrt(vec.x()*vec.x()+vec.y()*vec.y()+vec.z()*vec.z());
+  if (particleName == "opticalphoton" && !FirstPhoton){
+  	//G4ThreeVector vec = step->GetPreStepPoint()->GetPosition();
+  	//G4double r = sqrt(vec.x()*vec.x()+vec.y()*vec.y()+vec.z()*vec.z());
+  	rCurrent = r;
+  	CurrentTrackID = step -> GetTrack() -> GetTrackID();
+  	G4cout << "Track: " << step -> GetTrack() -> GetTrackID() << G4endl;
+  	G4cout << "RAD " << r << endl;
+  	FirstPhoton = true;
+  } else if (particleName == "opticalphoton" && FirstPhoton){
+  	if (CurrentTrackID != step -> GetTrack() -> GetTrackID()){
+  		CurrentTrackID = step -> GetTrack() -> GetTrackID();
+  	  	//G4ThreeVector vec = step->GetPreStepPoint()->GetPosition();
+  		//G4double r = sqrt(vec.x()*vec.x()+vec.y()*vec.y()+vec.z()*vec.z());
+	  	G4cout << "Track: " << step -> GetTrack() -> GetTrackID() << G4endl;
+	  	G4cout << "RAD " << r << endl;
+	  	//analysisManager->FillH1(2, rCurrent);
+  		FirstPhoton = false;
+  		rCurrent = r;
+  	} else { 
+  		analysisManager->FillH1(2, rCurrent);
+  		FirstPhoton = false;
+  	*/	
+  	
+  	
+  if (prePhysicalName == "pmt_glass"){// && particleName == "opticalphoton"){
+  //G4cout << "/////////////////////" << G4endl;
+  //G4cout << particleName << G4endl;
+  
+  fEventAction->nAbsPhotons++;
+  G4double EdepStep = step->GetPreStepPoint()->GetKineticEnergy();
+  
+	  
+ G4double prob_photon = 0.28;
+ G4double rnd = (float) rand()/RAND_MAX;
+  //G4double rnd = G4UniformRand();
+  if (rnd < 0.28){
+  	analysisManager->FillH1(0, EdepStep*1e06);
+  	//G4cout << rnd << " " << "Energy: " << EdepStep <<  G4endl;
+  	//G4cout << "/////////////////////" << G4endl;
   }
+  step->GetTrack()->SetTrackStatus(fStopAndKill);
+  //G4cout << "Energy: " << EdepStep <<  G4endl;
+  //analysisManager->FillH1(0, EdepStep*1e06);
+  //G4cout << "/////////////////////" << G4endl;
+  }
+  
+  //G4cout << "n_photons:  " << n_photons << G4endl;
+  //f.open("output.txt", ios::app);
+  //f << n_photons << endl;
   /*
   if (currentPhysicalName == "pmt"){
 	  if (particleName == "opticalphoton"){
 	  	G4cout << "//// photon ////" << G4endl;
 	  	n_photons++;
-		//feventAction->nAbsPhotons++;
+		feventAction->nAbsPhotons++;
 	    	//aStep->GetTrack()->SetTrackStatus(fStopAndKill);
 	  }
   }
-  f.open("output.txt");
-  f << n_photons;
+  
   */
   
 	//G4cout << "//////////////////////////////////" << G4endl;

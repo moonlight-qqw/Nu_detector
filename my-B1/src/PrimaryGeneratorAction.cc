@@ -38,6 +38,8 @@
 #include "G4ParticleDefinition.hh"
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
+#include "Analysis.hh"
+#include <math.h>
 
 namespace B1
 {
@@ -52,10 +54,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   // default particle kinematic
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   G4String particleName;
-  //G4ParticleDefinition* particle
-  //  = particleTable->FindParticle(particleName="e-");
-    
-    //G4ParticleDefinition* particle = particleTable->FindParticle(particleName="opticalphoton");
+  G4ParticleDefinition* particle = particleTable->FindParticle(particleName="e-");
+  fParticleGun->SetParticleDefinition(particle);
+  //G4ParticleDefinition* particle = particleTable->FindParticle(particleName="opticalphoton");
   //fParticleGun->SetParticleDefinition(particle);
   //fParticleGun->SetParticleMomentumDirection(G4ThreeVector(1.,0.,0.));
   //fParticleGun->SetParticleEnergy(1.*MeV);
@@ -72,8 +73,52 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
+
+	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 	//fParticleGun->SetParticlePosition(G4ThreeVector(-1500, 0, 0));
+	
+	// random distribution inside a spherical scintillator volume
+	
+	
+	
+	G4int option = 1; // 0 -- random distr    1 -- uniform distr 
+	
+	
+	G4double RADIUS = 620; // radius of scintillator sphere
+	if (option){
+	G4double r = 600*((float) rand()/RAND_MAX); // 0 -- 630 (scint sphere rad) 
+	G4double phi = 2*M_PI*((float) rand()/RAND_MAX); // 0 -- 2pi
+	G4double theta = M_PI*((float) rand()/RAND_MAX) - M_PI/2; // -pi/2 -- pi/2
+	
+	G4double x0 = r*sin(theta)*cos(phi);
+	G4double y0 = r*sin(theta)*sin(phi);
+	G4double z0 = r*cos(theta);
+	
+	fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+	G4double dist = sqrt(x0*x0+y0*y0+z0*z0);
+	
+	fParticleGun->SetParticleMomentumDirection(G4ThreeVector(-x0,-y0,-z0));
+  	fParticleGun->SetParticleEnergy(1.*MeV);
 	fParticleGun->GeneratePrimaryVertex(anEvent);
+	analysisManager->FillH1(2, dist);
+	} else {
+	 G4double phi = 2*M_PI*((float) rand()/RAND_MAX);
+	 G4double costheta = 2*((float) rand()/RAND_MAX)-1;
+	 G4double u = ((float) rand()/RAND_MAX);
+	 G4double theta = acos(costheta);
+	 G4double r = RADIUS * pow(u,1/3);
+	 G4double x0 = r* sin(theta) * cos(phi);
+         G4double y0 = r* sin(theta) * sin(phi);
+         G4double z0 = r * cos(theta);
+         G4double dist = sqrt(x0*x0+y0*y0+z0*z0);
+         analysisManager->FillH1(2, dist);
+         }
+	    //phi = np.random.uniform(0, 2 * np.pi, size=PTS_COUNT - 1)
+    //costheta = np.random.uniform(-1, 1, size=PTS_COUNT - 1)
+    //u = np.random.random(size=PTS_COUNT - 1)
+    //theta = np.arccos(costheta)
+    //r = RADIUS * np.cbrt(u)
+	// 
   //this function is called at the begining of ecah event
   //
 
@@ -110,6 +155,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4double z0 = -0.5 * envSizeZ;
 
   fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+  
 
   fParticleGun->GeneratePrimaryVertex(anEvent);
   */

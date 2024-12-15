@@ -144,6 +144,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	
 	// Out sphere material
 	G4Material* out_sphere_mat = nist->FindOrBuildMaterial("G4_Al");
+	G4Material* pmt_mat = nist->FindOrBuildMaterial("G4_Glass");
 
 	// Scintillator 1
 	G4Material* scint_mat = new G4Material("lin_alkyl_ppo", 0.863*g/cm3, 2); // C6H5C10H21 + PPO
@@ -154,6 +155,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4Material* lab = new G4Material("lin_alkyl", 0.863*g/cm3, 2);
 	lab->AddElementByNumberOfAtoms(elC, 15);
 	lab->AddElementByNumberOfAtoms(elH, 11);
+	
+	// Borosilicate Glass
+	G4Material* BSG = new G4Material("Bor_silc_glass", 2.23*g/cm3, 2); 
+	BSG->AddElementByNumberOfAtoms(elSi, 1);
+	BSG->AddElementByNumberOfAtoms(elO, 2);
 
 	// Glass
 	G4Material* PMMA = new G4Material("PMMA", 1.18*g/cm3, 3); // PMMA C5H8O2
@@ -167,28 +173,65 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 	// Scintillator 1 properties
 	
+	
+	/*
+	
 	std::vector<G4double> lxe_ABSL  = { 35. * cm, 35. * cm, 35. * cm };
 	
 	G4double Ephoton_sc[] = {1.0*eV, 7.0*eV};
 	G4double refractive_Scint[] = {1.5, 1.5};
 	G4double absorption_Scint[] = {5*m, 5*m}; // linalkyl
 	//G4double absorption_Scint[] = {10*cm, 10*cm};
-	G4double absorption_Scint_lab[] = {12*m, 12*m}; // lab
+	
 	
 	//std::vector<G4double> lxe_Energy = { 7.0 * eV, 7.07 * eV, 7.14 * eV };
 	
-	G4MaterialPropertiesTable* scint_mat_mpt = new G4MaterialPropertiesTable();
+	*/
+	
+	//G4double Ephoton_sc[] = {1.0*eV, 7.0*eV};
+	G4double Ephoton_sc[] = {1.0*eV, 7.0*eV};
+	G4double refractive_Scint[] = {1.5, 1.5};
+	G4double reflectivity_index[] = {1., 1.};
+	
+	G4double refractiveIndexPMMA[] =
+	{1.49, 1.49};
+	
+	G4double refractiveIndexBSG[] =
+	{1.471, 1.441};
+	
+	G4double absorptionPMMA[] =
+	{10*m, 10*m};
+	
+	G4double absorptionBSG[] =
+	{10*m, 10*m};
+	
+	G4double absorption_Scint_lab[] = {12*m, 12*m}; // lab
+	G4double absorption_Scint[] = {5*m, 5*m}; // linalkyl
+	
 	G4int nEntries = 12;
 	G4double ScintFast[nEntries] = {0,0.03,0.17,0.40,0.55,0.83,1.00,0.84,0.49,0.20,0.07,0.04};
 	G4double PhotonEnergy[nEntries] = {2.08*eV, 2.38*eV, 2.58*eV, 2.7*eV, 2.76*eV, 2.82*eV, 2.92*eV, 2.95*eV, 3.02*eV, 3.1*eV, 3.26*eV, 3.44*eV};
 	
+	G4MaterialPropertiesTable* PMMA_mpt = new G4MaterialPropertiesTable();
+	PMMA->SetMaterialPropertiesTable(PMMA_mpt);
+	PMMA_mpt ->AddProperty("RINDEX", Ephoton_sc, refractiveIndexPMMA, 2);
+	PMMA_mpt->AddProperty("ABSLENGTH", Ephoton_sc, absorptionPMMA, 2);
+	
+	G4MaterialPropertiesTable* BSG_mpt = new G4MaterialPropertiesTable();
+	BSG->SetMaterialPropertiesTable(BSG_mpt);
+	BSG_mpt ->AddProperty("RINDEX", Ephoton_sc, refractiveIndexBSG, 2);
+	BSG_mpt->AddProperty("ABSLENGTH", Ephoton_sc, absorptionBSG, 2);
+	
+	G4MaterialPropertiesTable* scint_mat_mpt = new G4MaterialPropertiesTable();
 	scint_mat_mpt->AddProperty("SCINTILLATIONCOMPONENT1",PhotonEnergy,ScintFast,nEntries);
 	scint_mat_mpt->AddConstProperty("SCINTILLATIONYIELD",10000./MeV); 
 	scint_mat_mpt->AddConstProperty("RESOLUTIONSCALE",1.);
 	scint_mat_mpt->AddConstProperty("SCINTILLATIONRISETIME1", 0.9 * ns);
-	scint_mat_mpt->AddConstProperty("SCINTILLATIONTIMECONSTANT1",1.*ns);
+	scint_mat_mpt->AddConstProperty("SCINTILLATIONTIMECONSTANT1",2.*ns);
 	scint_mat_mpt->AddConstProperty("SCINTILLATIONYIELD1",1.);
 	scint_mat_mpt->AddConstProperty("SCINTILLATIONYIELD2",0.);
+	//scint_mat_mpt->AddProperty("REFLECTIVITY",Ephoton_sc,reflectivity_index,2);
+
 	
   
   
@@ -204,6 +247,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	// Scintillator 2 properties
 	G4MaterialPropertiesTable* lab_mpt = new G4MaterialPropertiesTable();		 
 	lab_mpt -> AddProperty("ABSLENGTH", Ephoton_sc, absorption_Scint_lab, 2);
+	lab_mpt ->AddProperty("RINDEX", Ephoton_sc, refractiveIndexPMMA, 2);
+	
+	lab_mpt->AddProperty("SCINTILLATIONCOMPONENT1",PhotonEnergy,ScintFast,nEntries);
 	lab->SetMaterialPropertiesTable(lab_mpt);
 
 	
@@ -244,8 +290,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	// PMT Coordinates
 	//
 	
-	double f = (1+sqrt(5))/2;
-	double r = 750;
+	//double f = (1+sqrt(5))/2;
+	/*
+	double r = 800;
 	double pmt_20[20][3] = {
                             {r/sqrt(3), r/sqrt(3), r/sqrt(3)},
                             {-r/sqrt(3), r/sqrt(3), r/sqrt(3)},
@@ -271,7 +318,26 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                             {-r*f/sqrt(3), 0, -r/(sqrt(3)*f)},
                             {r*f/sqrt(3), 0, -r/(sqrt(3)*f)}
                         };
-
+        */
+        /*               
+        double r_12 = 460 // sqrt(3) factor
+        double pmt_12[12][3] = {
+			    {f*r,r,0},
+			    {f*r,-r,0},
+			    {-f*r,-r,0},
+			    {-f*r,r,0},
+			    
+			    {r,0,f*r},
+			    {-r,0,f*r},
+			    {-r,0,-f*r},
+			    {r,0,-f*r},
+			    
+			    {0,f*r,r},
+			    {0,f*r,-r},
+			    {0,-f*r,-r},
+			    {0,-f*r,r}
+			};
+	*/
 	G4double cylinderHalfHeight = 1860*mm/2;
 	G4double cylinderRadius = 1860*mm/2;
 	G4double thickness = 2*mm;
@@ -287,7 +353,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	//G4double ReflectorHalfLength = ScintHalfLength+ReflectorThickness;
 	//G4double ReflectorRadius = ScintRadius+ReflectorThickness;
 	
-	G4double PMTWindowHalfLength = 1.0*mm;
+	G4double PMTWindowHalfLength = 83.0*mm;
 	G4double PMTWindowRadius = 101*mm;
 	
 	//G4double CathodeHalfLength = 0.005*mm;
@@ -366,7 +432,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4Sphere *outer_sphere = new G4Sphere("outer_sphere", sphereRadius-sphereThickness, sphereRadius, StartPhi, DeltaPhi, StartPhi, DeltaPhi/2); 
 
 	G4LogicalVolume* logic_outer_sphere = new G4LogicalVolume(outer_sphere, 
-							outer_sphere_mat, "outer_sphere"); 
+							PMMA, "outer_sphere"); 
 
 	G4VPhysicalVolume* physic_outer_sphere = new G4PVPlacement(nullptr,  // no rotation
 						G4ThreeVector(),                     // at position
@@ -403,58 +469,194 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 	G4Tubs* pmt_arr[n_pmt];
 	
-	for (int i = 0; i < n_pmt; i++){
-	    //sprintf(pmt_name, "pmt_%d", i);
-	    G4String* g4_pmt_name = new G4String(pmt_name);
-	    
-	    G4ThreeVector* pmt_vect = new G4ThreeVector(pmt_20[i][0], pmt_20[i][1], pmt_20[i][2]);
-	    
-	    G4ThreeVector* inversed_pmt_vect = new G4ThreeVector(-pmt_20[i][0], -pmt_20[i][1], -pmt_20[i][2]);
-	    
-	    G4Tubs* pmt_sample = new G4Tubs(pmt_name, 0*mm, PMTWindowRadius, PMTWindowHalfLength, StartPhi, DeltaPhi);
-	    
-	    //sprintf(pmt_logic_name, "pmt_%d_logic", i);
-	    
-	    G4LogicalVolume* logic_pmt_sample = new G4LogicalVolume(pmt_sample, Si_mat, pmt_logic_name);    
-	    
-	    axis = vector_product(eZ, pmt_vect);
-	    
-	    G4double angle = angle_between(eZ, inversed_pmt_vect);
-	    //G4cout << i<< " angle: "<< angle << G4endl;
-	    //G4cout << i<< pmt_20[i][0] << "	" << pmt_20[i][1] << "	" << pmt_20[i][2] << G4endl;
-	    
-	    //if (angle > 180){ angle -= 180; }
-	    G4RotationMatrix* rotmat = new G4RotationMatrix();
-	    rotmat -> rotate(angle, axis); 
+	double f = (1+sqrt(5))/2;
+	if (n_pmt == 20){
+		for (int i = 0; i < n_pmt; i++){
+		double r = 800;
+		double pmt_20[20][3] = {
+			            {r/sqrt(3), r/sqrt(3), r/sqrt(3)},
+			            {-r/sqrt(3), r/sqrt(3), r/sqrt(3)},
+			            {-r/sqrt(3), -r/sqrt(3), r/sqrt(3)},
+			            {-r/sqrt(3), -r/sqrt(3), -r/sqrt(3)},
+			            {r/sqrt(3), -r/sqrt(3), -r/sqrt(3)},
+			            {r/sqrt(3), r/sqrt(3), -r/sqrt(3)},
+			            {-r/sqrt(3), r/sqrt(3), -r/sqrt(3)},
+			            {r/sqrt(3), -r/sqrt(3), r/sqrt(3)},
 
-	    G4VPhysicalVolume* physic_pmt_sample = new G4PVPlacement(rotmat,  // no rotation
-						    G4ThreeVector(pmt_20[i][0], pmt_20[i][1], pmt_20[i][2]),          // at pmt coord
-						    logic_pmt_sample,                 // its logical volume
-						    pmt_name,               // its name
-						    logic_inner_cylinder,               // its mother  volume
-						    false,                    // no boolean operation
-						    0,                        // copy number
-						    checkOverlaps);           // overlaps checking		   
-	//------------------------------------------------------
-	// Surfaces and boundary processes
-	//------------------------------------------------------
+			            {0, r/(sqrt(3)*f), r*f/sqrt(3)},
+			            {0, -r/(sqrt(3)*f), r*f/sqrt(3)},
+			            {0, -r/(sqrt(3)*f), -r*f/sqrt(3)},
+			            {0, r/(sqrt(3)*f), -r*f/sqrt(3)},
 
-	// Scintillator - PMT window surface 
-	
-	G4OpticalSurface* OpScintPMTWinSurface = 
-				new G4OpticalSurface("ScintPMTWinSurface");
-	
-	OpScintPMTWinSurface->SetType(dielectric_dielectric);
-	OpScintPMTWinSurface->SetModel(glisur);
-	OpScintPMTWinSurface->SetFinish(polished);
-	
-	G4LogicalBorderSurface* ScintPMTWinSurface = 
-    				new G4LogicalBorderSurface("ScintPMTWinSurface",physic_inner_sphere,physic_pmt_sample,
-							   OpScintPMTWinSurface);
+			            {r/(sqrt(3)*f), r*f/sqrt(3), 0},
+			            {-r/(sqrt(3)*f), r*f/sqrt(3), 0},
+			            {-r/(sqrt(3)*f), -r*f/sqrt(3), 0},
+			            {r/(sqrt(3)*f), -r*f/sqrt(3), 0},
 
-	    pmt_arr[i] = pmt_sample;
+			            {r*f/sqrt(3), 0, r/(sqrt(3)*f)},
+			            {-r*f/sqrt(3), 0, r/(sqrt(3)*f)},
+			            {-r*f/sqrt(3), 0, -r/(sqrt(3)*f)},
+			            {r*f/sqrt(3), 0, -r/(sqrt(3)*f)}
+			        };
+		    //sprintf(pmt_name, "pmt_%d", i);
+		    G4String* g4_pmt_name = new G4String(pmt_name);
+		    
+		    G4ThreeVector* pmt_vect = new G4ThreeVector(pmt_20[i][0], pmt_20[i][1], pmt_20[i][2]);
+		    
+		    G4ThreeVector* inversed_pmt_vect = new G4ThreeVector(-pmt_20[i][0], -pmt_20[i][1], -pmt_20[i][2]);
+		    
+		    G4Tubs* pmt_sample = new G4Tubs(pmt_name, 0*mm, PMTWindowRadius, PMTWindowHalfLength, StartPhi, DeltaPhi);
+		    //G4cout << "angle: " << asin(101/131) << G4endl;
+		 
+		    
+		    G4Sphere* pmt_glass = new G4Sphere("pmt_glass_sample", 110*mm, 131*mm, StartPhi, DeltaPhi, 0*deg, 50.44*deg);
+		   
+		    
+		    G4LogicalVolume* logic_pmt_glass = new G4LogicalVolume(pmt_glass, BSG, "pmt_glass_logic");  
+		    
+		    //sprintf(pmt_logic_name, "pmt_%d_logic", i);
+		    
+		    G4LogicalVolume* logic_pmt_sample = new G4LogicalVolume(pmt_sample, outer_sphere_mat, pmt_logic_name);  
+		      
+		    
+		    axis = vector_product(eZ, pmt_vect);
+		    
+		    G4double angle = angle_between(eZ, inversed_pmt_vect);
+		    //G4cout << i<< " angle: "<< angle << G4endl;
+		    //G4cout << i<< pmt_20[i][0] << "	" << pmt_20[i][1] << "	" << pmt_20[i][2] << G4endl;
+		    
+		    //if (angle > 180){ angle -= 180; }
+		    G4RotationMatrix* rotmat = new G4RotationMatrix();
+		    rotmat -> rotate(angle, axis); 
+
+		    G4VPhysicalVolume* physic_pmt_sample = new G4PVPlacement(rotmat,  // no rotation
+							    G4ThreeVector(pmt_20[i][0], pmt_20[i][1], pmt_20[i][2]),          // at pmt coord
+							    logic_pmt_sample,                 // its logical volume
+							    pmt_name,               // its name
+							    logic_inner_cylinder,               // its mother  volume
+							    false,                    // no boolean operation
+							    0,                        // copy number
+							    checkOverlaps);           // overlaps checking	
+							    
+		    G4VPhysicalVolume* physic_pmt_glass = new G4PVPlacement(rotmat,  // no rotation
+							    G4ThreeVector(pmt_20[i][0], pmt_20[i][1], pmt_20[i][2]),          // at pmt coord
+							    logic_pmt_glass,                 // its logical volume
+							    "pmt_glass",               // its name
+							    logic_inner_cylinder,               // its mother  volume
+							    false,                    // no boolean operation
+							    0,                        // copy number
+							    checkOverlaps);           // overlaps checking					    	   
+		//------------------------------------------------------
+		// Surfaces and boundary processes
+		//------------------------------------------------------
+
+		// Scintillator - PMT window surface 
+		
+		G4OpticalSurface* OpScintPMTWinSurface = 
+					new G4OpticalSurface("ScintPMTWinSurface");
+					
+		// г4 сфере умеет задваться куском чтобы сделать стекло
+		
+		OpScintPMTWinSurface->SetType(dielectric_dielectric);
+		OpScintPMTWinSurface->SetModel(glisur);
+		OpScintPMTWinSurface->SetFinish(polished);
+		
+		G4LogicalBorderSurface* ScintPMTWinSurface = 
+	    				new G4LogicalBorderSurface("ScintPMTWinSurface",physic_inner_sphere,physic_pmt_sample,
+								   OpScintPMTWinSurface);
+
+		    pmt_arr[i] = pmt_sample;
+		}
+	} else { // 12 pmt
+		double r = 420; // sqrt(3) factor
+		double pmt_12[12][3] = {
+				    {f*r,r,0},
+				    {f*r,-r,0},
+				    {-f*r,-r,0},
+				    {-f*r,r,0},
+				    
+				    {r,0,f*r},
+				    {-r,0,f*r},
+				    {-r,0,-f*r},
+				    {r,0,-f*r},
+				    
+				    {0,f*r,r},
+				    {0,f*r,-r},
+				    {0,-f*r,-r},
+				    {0,-f*r,r}
+				};
+				
+		for (int i = 0; i < n_pmt; i++){
+		    //sprintf(pmt_name, "pmt_%d", i);
+		    G4String* g4_pmt_name = new G4String(pmt_name);
+
+		    G4ThreeVector* pmt_vect = new G4ThreeVector(pmt_12[i][0], pmt_12[i][1], pmt_12[i][2]);
+		    
+		    G4ThreeVector* inversed_pmt_vect = new G4ThreeVector(-pmt_12[i][0], -pmt_12[i][1], -pmt_12[i][2]);
+		    
+		    G4Tubs* pmt_sample = new G4Tubs(pmt_name, 0*mm, PMTWindowRadius, PMTWindowHalfLength, StartPhi, DeltaPhi);
+		    //G4cout << "angle: " << asin(101/131) << G4endl;
+		 
+		    
+		    G4Sphere* pmt_glass = new G4Sphere("pmt_glass_sample", 110*mm, 131*mm, StartPhi, DeltaPhi, 0*deg, 50.44*deg);
+		   
+		    
+		    G4LogicalVolume* logic_pmt_glass = new G4LogicalVolume(pmt_glass, BSG, "pmt_glass_logic");  
+		    
+		    //sprintf(pmt_logic_name, "pmt_%d_logic", i);
+		    
+		    G4LogicalVolume* logic_pmt_sample = new G4LogicalVolume(pmt_sample, outer_sphere_mat, pmt_logic_name);  
+		      
+		    
+		    axis = vector_product(eZ, pmt_vect);
+		    
+		    G4double angle = angle_between(eZ, inversed_pmt_vect);
+		    //G4cout << i<< " angle: "<< angle << G4endl;
+		    //G4cout << i<< pmt_12[i][0] << "	" << pmt_12[i][1] << "	" << pmt_12[i][2] << G4endl;
+		    
+		    //if (angle > 180){ angle -= 180; }
+		    G4RotationMatrix* rotmat = new G4RotationMatrix();
+		    rotmat -> rotate(angle, axis); 
+
+		    G4VPhysicalVolume* physic_pmt_sample = new G4PVPlacement(rotmat,  // no rotation
+							    G4ThreeVector(pmt_12[i][0], pmt_12[i][1], pmt_12[i][2]),          // at pmt coord
+							    logic_pmt_sample,                 // its logical volume
+							    pmt_name,               // its name
+							    logic_inner_cylinder,               // its mother  volume
+							    false,                    // no boolean operation
+							    0,                        // copy number
+							    checkOverlaps);           // overlaps checking	
+							    
+		    G4VPhysicalVolume* physic_pmt_glass = new G4PVPlacement(rotmat,  // no rotation
+							    G4ThreeVector(pmt_12[i][0], pmt_12[i][1], pmt_12[i][2]),          // at pmt coord
+							    logic_pmt_glass,                 // its logical volume
+							    "pmt_glass",               // its name
+							    logic_inner_cylinder,               // its mother  volume
+							    false,                    // no boolean operation
+							    0,                        // copy number
+							    checkOverlaps);           // overlaps checking					    	   
+		//------------------------------------------------------
+		// Surfaces and boundary processes
+		//------------------------------------------------------
+
+		// Scintillator - PMT window surface 
+		
+		G4OpticalSurface* OpScintPMTWinSurface = 
+					new G4OpticalSurface("ScintPMTWinSurface");
+					
+		// г4 сфере умеет задваться куском чтобы сделать стекло
+		
+		OpScintPMTWinSurface->SetType(dielectric_dielectric);
+		OpScintPMTWinSurface->SetModel(glisur);
+		OpScintPMTWinSurface->SetFinish(polished);
+		
+		G4LogicalBorderSurface* ScintPMTWinSurface = 
+	    				new G4LogicalBorderSurface("ScintPMTWinSurface",physic_inner_sphere,physic_pmt_sample,
+								   OpScintPMTWinSurface);
+
+		    pmt_arr[i] = pmt_sample;
+		}
 	}
-	
 	
 	//------------------------------------------------------
 	// visualization attributes

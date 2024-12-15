@@ -50,6 +50,39 @@ RunAction::RunAction()
 {
   // add new units for dose
   //
+  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+  G4cout << "Using " << analysisManager->GetType() << G4endl;
+  	  analysisManager->SetFirstHistoId(0); // default is 0
+	  analysisManager->SetFirstNtupleId(0); // default is 0
+	  
+	  xmin = 0; //
+	  xmax = 10; //
+	  binsize = 1; //
+	  nbins= (int)(xmax-xmin)/binsize;
+          analysisManager->CreateH1("Histo1","Photon Energy", nbins, xmin, xmax);
+         
+  	  xmin = 0; //
+	  xmax = 2e3; //
+	  binsize = 2; //
+	  nbins= (int)(xmax-xmin)/binsize;
+          analysisManager->CreateH1("Histo2","Absorbed Photons", nbins, xmin, xmax);
+          
+          xmin = 0; //
+	  xmax = 800; //
+	  binsize = 10; //
+	  nbins= (int)(xmax-xmin)/binsize;
+          analysisManager->CreateH1("Histo3","detection distance", nbins, xmin, xmax);
+          
+
+  	  // Creating ntuple
+	  //
+	  analysisManager->CreateNtuple("B4", "Edep and TrackL...");
+	  analysisManager->CreateNtupleDColumn("Edep");
+	  analysisManager->CreateNtupleDColumn("nAbsPhotons");
+	  //analysisManager->CreateNtupleDColumn("absTime");
+	  //analysisManager->CreateNtupleDColumn("EPrimaries");
+	  analysisManager->FinishNtuple();
+	  
   const G4double milligray = 1.e-3*gray;
   const G4double microgray = 1.e-6*gray;
   const G4double nanogray  = 1.e-9*gray;
@@ -76,6 +109,17 @@ void RunAction::BeginOfRunAction(const G4Run*)
   // reset accumulables to their initial values
   G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
   accumulableManager->Reset();
+  
+  	  //inform the runManager to save random number seed
+	  //G4RunManager::GetRunManager()->SetRandomNumberStore(true);
+
+	  // Get analysis manager
+	  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+
+	  // Open an output file
+	  //
+	  G4String fileName = "../Edep.root";
+	  analysisManager->OpenFile(fileName);
 
 }
 
@@ -83,6 +127,11 @@ void RunAction::BeginOfRunAction(const G4Run*)
 
 void RunAction::EndOfRunAction(const G4Run* run)
 {
+	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+	  // save histograms & ntuple
+	  //
+	  analysisManager->Write();
+	  analysisManager->CloseFile();
   G4int nofEvents = run->GetNumberOfEvent();
   if (nofEvents == 0) return;
 
@@ -90,35 +139,12 @@ void RunAction::EndOfRunAction(const G4Run* run)
   G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
   accumulableManager->Merge();
 
-  // Compute dose = total energy deposit in a run and its variance
-  //
-  G4double edep  = fEdep.GetValue();
-  G4double edep2 = fEdep2.GetValue();
-
-  G4double rms = edep2 - edep*edep/nofEvents;
-  if (rms > 0.) rms = std::sqrt(rms); else rms = 0.;
-
-  const auto detConstruction = static_cast<const DetectorConstruction*>(
-    G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-  G4double mass = detConstruction->GetScoringVolume()->GetMass();
-  G4double dose = edep/mass;
-  G4double rmsDose = rms/mass;
-
   // Run conditions
   //  note: There is no primary generator action object for "master"
   //        run manager for multi-threaded mode.
   const auto generatorAction = static_cast<const PrimaryGeneratorAction*>(
     G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction());
-  G4String runCondition;
-  if (generatorAction)
-  {
-    const G4ParticleGun* particleGun = generatorAction->GetParticleGun();
-    runCondition += particleGun->GetParticleDefinition()->GetParticleName();
-    runCondition += " of ";
-    G4double particleEnergy = particleGun->GetParticleEnergy();
-    runCondition += G4BestUnit(particleEnergy,"Energy");
-  }
-
+ 
   // Print
   //
   if (IsMaster()) {
@@ -131,17 +157,6 @@ void RunAction::EndOfRunAction(const G4Run* run)
      << G4endl
      << "--------------------End of Local Run------------------------";
   }
-
-  G4cout
-     << G4endl
-     << " The run consists of " << nofEvents << " "<< runCondition
-     << G4endl
-     << " Cumulated dose per run, in scoring volume : "
-     << G4BestUnit(dose,"Dose") << " rms = " << G4BestUnit(rmsDose,"Dose")
-     << G4endl
-     << "------------------------------------------------------------"
-     << G4endl
-     << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

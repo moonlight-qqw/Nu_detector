@@ -3054,7 +3054,69 @@ CMakeFiles/exampleB1.dir/src/PrimaryGeneratorAction.cc.o: /home/local1/my-B1/src
   /usr/local/geant4.11.2.1/include/Geant4/G4ParticleTable.hh \
   /usr/local/geant4.11.2.1/include/Geant4/G4ParticleDefinition.hh \
   /usr/local/geant4.11.2.1/include/Geant4/G4SystemOfUnits.hh \
-  /usr/local/geant4.11.2.1/include/Geant4/Randomize.hh
+  /usr/local/geant4.11.2.1/include/Geant4/Randomize.hh \
+  /home/local1/my-B1/include/Analysis.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4AnalysisManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4GenericAnalysisManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4ToolsAnalysisManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VAnalysisManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4AnalysisManagerState.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4AnalysisVerbose.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4AnalysisUtilities.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VTBaseHnManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4HnInformation.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4BinScheme.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4Fcn.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VAnalysisManager.icc \
+  /usr/local/geant4.11.2.1/include/Geant4/G4HnManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4BaseAnalysisManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4NtupleBookingManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/ntuple_booking \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/cids \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/cid \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/typedefs \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/forit \
+  /usr/local/geant4.11.2.1/include/Geant4/G4NtupleBookingManager.icc \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VNtupleManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VFileManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4BaseFileManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VTHnFileManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4TH1ToolsManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4THnToolsManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4THnManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4THnManager.icc \
+  /usr/local/geant4.11.2.1/include/Geant4/G4THnMessenger.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4THnToolsManager.icc \
+  /usr/local/geant4.11.2.1/include/Geant4/G4THnMessenger.icc \
+  /usr/local/geant4.11.2.1/include/Geant4/G4Tokenizer.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4TH2ToolsManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4TH3ToolsManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4TP1ToolsManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4TP2ToolsManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/h1d \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/h1 \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/b1 \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/base_histo \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/histo_data \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/axes \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/axis \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/eqT \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/h2d \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/h2 \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/b2 \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/h3d \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/h3 \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/b3 \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/p1d \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/p1 \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/profile_data \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/p2d \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/p2 \
+  /usr/local/geant4.11.2.1/include/Geant4/G4ToolsAnalysisManager.icc \
+  /usr/local/geant4.11.2.1/include/Geant4/G4GenericAnalysisManager.icc \
+  /usr/local/geant4.11.2.1/include/Geant4/G4GenericFileManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4GenericFileManager.icc \
+  /usr/include/c++/11/math.h
 
 CMakeFiles/exampleB1.dir/src/RunAction.cc.o: /home/local1/my-B1/src/RunAction.cc \
   /usr/include/stdc-predef.h \
@@ -4288,7 +4350,69 @@ CMakeFiles/exampleB1.dir/src/SteppingAction.cc.o: /home/local1/my-B1/src/Steppin
   /usr/include/c++/11/list \
   /usr/include/c++/11/bits/stl_list.h \
   /usr/include/c++/11/bits/list.tcc \
-  /usr/local/geant4.11.2.1/include/Geant4/G4LogicalVolume.hh
+  /usr/local/geant4.11.2.1/include/Geant4/G4LogicalVolume.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/Randomize.hh \
+  /home/local1/my-B1/include/Analysis.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4AnalysisManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4GenericAnalysisManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4ToolsAnalysisManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VAnalysisManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4AnalysisManagerState.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4AnalysisVerbose.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4AnalysisUtilities.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VTBaseHnManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4HnInformation.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4BinScheme.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4Fcn.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VAnalysisManager.icc \
+  /usr/local/geant4.11.2.1/include/Geant4/G4HnManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4BaseAnalysisManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4NtupleBookingManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/ntuple_booking \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/cids \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/cid \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/typedefs \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/forit \
+  /usr/local/geant4.11.2.1/include/Geant4/G4NtupleBookingManager.icc \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VNtupleManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VFileManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4BaseFileManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VTHnFileManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4TH1ToolsManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4THnToolsManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4THnManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4THnManager.icc \
+  /usr/local/geant4.11.2.1/include/Geant4/G4THnMessenger.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4THnToolsManager.icc \
+  /usr/local/geant4.11.2.1/include/Geant4/G4THnMessenger.icc \
+  /usr/local/geant4.11.2.1/include/Geant4/G4Tokenizer.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4TH2ToolsManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4TH3ToolsManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4TP1ToolsManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4TP2ToolsManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/h1d \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/h1 \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/b1 \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/base_histo \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/histo_data \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/axes \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/axis \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/eqT \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/h2d \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/h2 \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/b2 \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/h3d \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/h3 \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/b3 \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/p1d \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/p1 \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/profile_data \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/p2d \
+  /usr/local/geant4.11.2.1/include/Geant4/tools/histo/p2 \
+  /usr/local/geant4.11.2.1/include/Geant4/G4ToolsAnalysisManager.icc \
+  /usr/local/geant4.11.2.1/include/Geant4/G4GenericAnalysisManager.icc \
+  /usr/local/geant4.11.2.1/include/Geant4/G4GenericFileManager.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4GenericFileManager.icc
 
 
 /usr/local/geant4.11.2.1/include/Geant4/G4UnitsTable.hh:
@@ -4874,6 +4998,8 @@ CMakeFiles/exampleB1.dir/src/SteppingAction.cc.o: /home/local1/my-B1/src/Steppin
 /usr/local/geant4.11.2.1/include/Geant4/G4EventManager.hh:
 
 /usr/include/c++/11/bits/uses_allocator.h:
+
+/usr/include/c++/11/math.h:
 
 /usr/include/bits/timex.h:
 
